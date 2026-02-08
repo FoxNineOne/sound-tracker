@@ -1,3 +1,5 @@
+Turn list of sound library to a drop down, rather than onscreen list
+
 Allow custom sounds to be added to saved list
 This can be on a modal window.
 
@@ -7,5 +9,3 @@ Allow saving of what's rendered to local storage
 
 Allow saving of what's rendered to output file
 Allow loading of output file to render onscreen
-
-Create custom label field to distinct between two sound types of same name (i.e percussion or guitar)
