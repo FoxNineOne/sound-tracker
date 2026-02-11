@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import {
   ResponsiveContainer,
   AreaChart,
@@ -12,6 +13,7 @@ import {
   Legend,
   Cell,
 } from "recharts";
+const LS_KEY = "sound-tracker:v1";
 
 const soundLibrary = [
   {
@@ -142,7 +144,17 @@ const depths = ["front", "middle", "back"];
 const shapes = ["transient", "sustained"];
 
 export default function App() {
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState(() => {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed.selectedRows) ? parsed.selectedRows : [];
+    } catch {
+      return [];
+    }
+  });
+  const [selectedSoundId, setSelectedSoundId] = useState("");
 
   const freqTotals = frequencyBands.reduce((acc, band) => {
     acc[band] = 0;
@@ -201,7 +213,6 @@ export default function App() {
     value: shapeTotals[shape],
   }));
 
-  const shapeOptions = ["transient", "sustained"];
   const SHAPE_COLORS = ["#4e46e581", "#a09cebbe"]; // transient, sustained
 
   function addSound(soundId) {
@@ -287,19 +298,41 @@ export default function App() {
     );
   }
 
+  useEffect(() => {
+    const payload = { selectedRows };
+    localStorage.setItem(LS_KEY, JSON.stringify(payload));
+  }, [selectedRows]);
+
   return (
     <div>
-      <h1>Sound Tracker</h1>
+      <header>
+        <h1>Sound Tracker</h1>
+        <p className="center">
+          {" "}
+          Keep your music projects balanced{" "}
+          <img
+            src="/img/information.png"
+            width="1.5%"
+            alt="More Info"
+            className="hover-img"
+            onClick={() => console.log("Meow")}
+          ></img>{" "}
+        </p>
+      </header>
+      {/*
       <h2>Sound Library</h2>
 
       <ul>
         {soundLibrary.map((sound) => (
           <li key={sound.id} className="soundLibrary">
             {sound.name}{" "}
-            <button onClick={() => addSound(sound.id)}>Add</button>{" "}
+            <button className="hover-btn" onClick={() => addSound(sound.id)}>
+              Add
+            </button>{" "}
           </li>
         ))}
       </ul>
+*/}
       <h2>Selected Sounds</h2>
       {selectedRows.length === 0 ? (
         <p>No Sounds selected, add some sounds!</p>
@@ -331,6 +364,7 @@ export default function App() {
                     onChange={(e) => updateLabel(row.rowId, e.target.value)}
                   ></input>
                   <button
+                    className="hover-btn"
                     style={{ marginLeft: 12 }}
                     onClick={() => removeSound(row.rowId)}
                   >
@@ -344,7 +378,7 @@ export default function App() {
                       <label key={band} style={{ marginRight: 12 }}>
                         <input
                           type="checkbox"
-                          className="freq"
+                          className="hover-btn freq"
                           style={{ marginLeft: 1, marginRight: 1 }}
                           checked={row.freqBands.includes(band)}
                           onChange={() => toggleFreqBand(row.rowId, band)}
@@ -361,7 +395,7 @@ export default function App() {
                       >
                         <input
                           type="checkbox"
-                          className="stereo"
+                          className="hover-btn stereo"
                           style={{ marginLeft: 1, marginRight: 1 }}
                           checked={row.stereoPresences.includes(presence)}
                           onChange={() => toggleStereo(row.rowId, presence)}
@@ -378,7 +412,7 @@ export default function App() {
                       >
                         <input
                           type="checkbox"
-                          className="depth"
+                          className="hover-btn depth"
                           style={{ marginLeft: 1, marginRight: 1 }}
                           checked={row.depths.includes(depth)}
                           onChange={() => toggleDepth(row.rowId, depth)}
@@ -395,7 +429,7 @@ export default function App() {
                       >
                         <input
                           type="checkbox"
-                          className="shape"
+                          className="hover-btn shape"
                           style={{ marginLeft: 1, marginRight: 1 }}
                           checked={row.shapes.includes(shape)}
                           onChange={() => toggleShape(row.rowId, shape)}
@@ -410,6 +444,46 @@ export default function App() {
         </div>
       )}
       <div>
+        <p>
+          <select
+            value={selectedSoundId}
+            onChange={(e) => {
+              const id = e.target.value;
+              addSound(id);
+              setSelectedSoundId("");
+            }}
+          >
+            <option value="" disabled>
+              Add New Sound
+            </option>
+
+            {soundLibrary.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+          <br />
+
+          <br />
+          {selectedRows.length > 0 && (
+            <button
+              className="hover-btn clear"
+              onClick={() => {
+                const confirmed = window.confirm(
+                  "Are you sure you want to clear all sounds?",
+                );
+                if (confirmed) {
+                  setSelectedRows([]);
+                }
+              }}
+            >
+              Clear Sound List
+            </button>
+          )}
+        </p>
+      </div>
+      <div>
         <h2 className="freq">Frequency Totals</h2>
         <ul>
           {frequencyBands.map((band) => (
@@ -419,7 +493,7 @@ export default function App() {
           ))}
         </ul>
 
-        <div style={{ width: "25%", height: 150 }}>
+        <div style={{ width: 250, height: 150 }}>
           <ResponsiveContainer>
             <AreaChart data={freqAreaData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -431,12 +505,12 @@ export default function App() {
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fill: "white" }}
-                tickLine={{ stroke: "white" }}
-                stroke="white"
+                tick={{ fill: "#ffffff00" }}
+                tickLine={{ stroke: "#ffffff00" }}
+                stroke="#ffffff"
               />
               {
-                // <Tooltip /> //Do I need this?
+                //<Tooltip /> //Do I need this?
               }
               <Area
                 type="monotone"
@@ -459,7 +533,7 @@ export default function App() {
           ))}
         </ul>
 
-        <div style={{ width: "25%", height: 150 }}>
+        <div style={{ width: 250, height: 150 }}>
           <ResponsiveContainer>
             <AreaChart data={presAreaData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -471,8 +545,8 @@ export default function App() {
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fill: "white" }}
-                tickLine={{ stroke: "white" }}
+                tick={{ fill: "#ffffff00" }}
+                tickLine={{ stroke: "#ffffff00" }}
                 stroke="white"
               />
               {
@@ -499,7 +573,7 @@ export default function App() {
           ))}
         </ul>
 
-        <div style={{ width: "25%", height: 150 }}>
+        <div style={{ width: 250, height: 150 }}>
           <ResponsiveContainer>
             <AreaChart data={depthAreaData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -511,8 +585,8 @@ export default function App() {
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fill: "white" }}
-                tickLine={{ stroke: "white" }}
+                tick={{ fill: "#ffffff00" }}
+                tickLine={{ stroke: "#ffffff00" }}
                 stroke="white"
               />
               {
@@ -539,7 +613,7 @@ export default function App() {
           ))}
         </ul>
 
-        <div style={{ width: "25%", height: 150 }}>
+        <div style={{ width: 250, height: 200 }}>
           <ResponsiveContainer>
             <PieChart>
               <Pie
@@ -567,6 +641,13 @@ export default function App() {
           </ResponsiveContainer>
         </div>
       </div>
+      <footer className="center">
+        <p>
+          Created by <a href="https://github.com/FoxNineOne">FoxNineOne</a>,
+          Inspired by the teachings of{" "}
+          <a href="https://www.itsnavied.com/choice">Navie D</a>
+        </p>
+      </footer>
     </div>
   );
 }

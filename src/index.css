@@ -44,6 +44,7 @@ h3 {
   font-weight: 300;
   font-style: normal;
   margin-left: 9%;
+  font-size: 110%;
 }
 
 p {
@@ -52,6 +53,7 @@ p {
   font-weight: 400;
   font-style: normal;
   margin-left: 7.5%;
+  font-size: 110%;
 }
 li {
   color: #fff;
@@ -70,6 +72,31 @@ button {
   font-weight: 400;
   font-style: normal;
 }
+
+select {
+  background-color: rgba(132, 140, 142, 0);
+  color: #fff;
+  border-color: #fff;
+  border-style: double;
+
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 110%;
+}
+
+select option {
+  background: rgb(132, 140, 142);
+  color: #fff;
+  border-color: #fff;
+  border-style: double;
+
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 100%;
+}
+
 .soundLibrary {
   margin-bottom: 0.5%;
 }
@@ -106,4 +133,34 @@ button {
   font-family: "Questrial", sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+.center {
+  text-align: center;
+  margin-left: 0%;
+}
+
+.hover-img {
+  transition: transform 0.3s ease; /* Makes the hover smooth */
+}
+
+.hover-img:hover {
+  transform: scale(2.1); /* Zooms in slightly */
+  filter: brightness(1.2); /* Makes it brighter */
+  cursor: pointer;
+}
+
+.hover-btn:hover {
+  transition: transform 0.3s ease;
+  transform: scale(1.2); /* Zooms in slightly */
+  filter: brightness(1.2); /* Makes it brighter */
+  cursor: pointer;
+}
+.clear {
+  accent-color: rgb(227, 81, 81);
+  color: rgb(0, 0, 0);
+  border-color: rgb(227, 81, 81);
+  font-size: 90%;
+  width: 15%;
+  font-family: "Questrial", sans-serif;
+  font-style: bold;
 }
