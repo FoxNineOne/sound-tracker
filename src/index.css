@@ -1,0 +1,109 @@
+body {
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, Arial, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background: #848c8e;
+  background: linear-gradient(
+    45deg,
+    rgba(132, 140, 142, 1) 13%,
+    rgba(132, 140, 142, 1) 67%,
+    rgba(132, 140, 142, 1) 100%
+  );
+}
+
+code {
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+h1 {
+  text-align: center;
+  color: #fff;
+
+  font-family: "Questrial", sans-serif;
+}
+
+h2 {
+  text-decoration: underline;
+  color: #ffcf56;
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin-left: 5%;
+}
+
+h3 {
+  font-size: 100%;
+  color: #f3f3f3;
+  font-family: "Questrial", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  margin-left: 9%;
+}
+
+p {
+  color: #fff;
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin-left: 7.5%;
+}
+li {
+  color: #fff;
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin-left: 5%;
+}
+button {
+  background-color: rgba(132, 140, 142, 0);
+  color: #fff;
+  border-color: #fff;
+  border-style: double;
+
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.soundLibrary {
+  margin-bottom: 0.5%;
+}
+
+.rowLabel {
+  font-family: "Questrial", sans-serif;
+  background-color: rgba(240, 248, 255, 0.156);
+  border-color: #ffffff00;
+  color: #fff;
+  width: 100px;
+}
+
+.freq {
+  accent-color: aquamarine;
+  color: aquamarine;
+}
+
+.stereo {
+  accent-color: rgb(224, 164, 35);
+  color: rgb(224, 164, 35);
+}
+
+.depth {
+  accent-color: rgb(227, 81, 81);
+  color: rgb(246, 138, 138);
+}
+
+.shape {
+  accent-color: rgb(78, 122, 255);
+  color: rgb(137, 164, 245);
+}
+
+.questrial-regular {
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
