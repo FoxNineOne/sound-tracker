@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import {
   ResponsiveContainer,
@@ -144,16 +144,26 @@ const depths = ["front", "middle", "back"];
 const shapes = ["transient", "sustained"];
 
 export default function App() {
-  const [selectedRows, setSelectedRows] = useState(() => {
+  const fileInputRef = useRef(null);
+  const savedData = (() => {
     try {
       const raw = localStorage.getItem(LS_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed.selectedRows) ? parsed.selectedRows : [];
+      return raw ? JSON.parse(raw) : {};
     } catch {
-      return [];
+      return {};
     }
-  });
+  })();
+
+  const [selectedRows, setSelectedRows] = useState(
+    savedData.selectedRows ?? [],
+  );
+
+  const [customSounds, setCustomSounds] = useState(
+    savedData.customSounds ?? [],
+  );
+
+  const fullLibrary = [...soundLibrary, ...customSounds];
+
   const [selectedSoundId, setSelectedSoundId] = useState("");
 
   const freqTotals = frequencyBands.reduce((acc, band) => {
@@ -216,7 +226,7 @@ export default function App() {
   const SHAPE_COLORS = ["#4e46e581", "#a09cebbe"]; // transient, sustained
 
   function addSound(soundId) {
-    const sound = soundLibrary.find((sound) => sound.id === soundId);
+    const sound = fullLibrary.find((sound) => sound.id === soundId);
     if (!sound) return;
     const newRow = {
       rowId: crypto.randomUUID(),
@@ -298,10 +308,82 @@ export default function App() {
     );
   }
 
+  function exportProject() {
+    const payload = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      app: "sound-tracker",
+      selectedRows,
+      customSounds,
+    };
+
+    const json = JSON.stringify(payload, null, 2); // pretty
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const stamp = new Date().toISOString().slice(0, 19).replaceAll(":", "-");
+    const filename = `sound-tracker-export-${stamp}.json`;
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(url);
+  }
+
+  function importProjectFile(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      try {
+        const text = String(reader.result ?? "");
+        const data = JSON.parse(text);
+
+        // ✅ Minimal validation: must contain an array called selectedRows
+        if (!data || !Array.isArray(data.selectedRows)) {
+          alert("Invalid file: missing selectedRows array.");
+          return;
+        }
+
+        // Optional: soft-validate rows have expected keys
+        const rows = data.selectedRows.filter(
+          (r) =>
+            r &&
+            typeof r === "object" &&
+            typeof r.rowId === "string" &&
+            typeof r.soundId === "string" &&
+            Array.isArray(r.freqBands),
+        );
+
+        if (rows.length !== data.selectedRows.length) {
+          const ok = window.confirm(
+            "Some rows in this file look invalid and will be skipped. Continue?",
+          );
+          if (!ok) return;
+        }
+
+        setSelectedRows(rows);
+
+        // Reset the file input so importing the same file again still triggers change
+        event.target.value = "";
+      } catch (err) {
+        alert("Could not import file. Is it valid JSON?");
+      }
+    };
+
+    reader.readAsText(file);
+  }
+
   useEffect(() => {
-    const payload = { selectedRows };
+    const payload = { selectedRows, customSounds };
     localStorage.setItem(LS_KEY, JSON.stringify(payload));
-  }, [selectedRows]);
+  }, [selectedRows, customSounds]);
 
   return (
     <div>
@@ -349,7 +431,7 @@ export default function App() {
           </h3>
           <ul>
             {selectedRows.map((row) => {
-              const sound = soundLibrary.find(
+              const sound = fullLibrary.find(
                 (sound) => sound.id === row.soundId,
               );
 
@@ -464,8 +546,10 @@ export default function App() {
             ))}
           </select>
           <br />
-
           <br />
+          {
+            //Clear Button
+          }
           {selectedRows.length > 0 && (
             <button
               className="hover-btn clear"
@@ -478,7 +562,30 @@ export default function App() {
                 }
               }}
             >
-              Clear Sound List
+              Clear List
+            </button>
+          )}
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <button
+            className="hover-btn import"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Import Project
+          </button>
+          <input
+            type="file"
+            accept="application/json"
+            ref={fileInputRef}
+            onChange={importProjectFile}
+            style={{ display: "none" }}
+          />
+          {
+            //Export Button
+          }
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          {(selectedRows.length > 0 || customSounds.length > 0) && (
+            <button className="hover-btn export" onClick={exportProject}>
+              Export project
             </button>
           )}
         </p>
@@ -493,8 +600,13 @@ export default function App() {
           ))}
         </ul>
 
-        <div style={{ width: 250, height: 150 }}>
-          <ResponsiveContainer>
+        <div style={{ width: 250, height: 200 }} width="100%" height="100%">
+          <ResponsiveContainer
+            minWidth="0"
+            minHeight="0"
+            width="100%"
+            height="100%"
+          >
             <AreaChart data={freqAreaData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -533,8 +645,13 @@ export default function App() {
           ))}
         </ul>
 
-        <div style={{ width: 250, height: 150 }}>
-          <ResponsiveContainer>
+        <div style={{ width: 250, height: 200 }}>
+          <ResponsiveContainer
+            minWidth="0"
+            minHeight="0"
+            width="100%"
+            height="100%"
+          >
             <AreaChart data={presAreaData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -573,8 +690,13 @@ export default function App() {
           ))}
         </ul>
 
-        <div style={{ width: 250, height: 150 }}>
-          <ResponsiveContainer>
+        <div style={{ width: 250, height: 200 }}>
+          <ResponsiveContainer
+            minWidth="0"
+            minHeight="0"
+            width="100%"
+            height="100%"
+          >
             <AreaChart data={depthAreaData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -614,7 +736,12 @@ export default function App() {
         </ul>
 
         <div style={{ width: 250, height: 200 }}>
-          <ResponsiveContainer>
+          <ResponsiveContainer
+            minWidth="0"
+            minHeight="0"
+            width="100%"
+            height="100%"
+          >
             <PieChart>
               <Pie
                 data={shapePieData}
@@ -622,7 +749,8 @@ export default function App() {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius="80%"
+                outerRadius="100%"
+                innerRadius="20%"
               >
                 {shapePieData.map((_, index) => (
                   <Cell
@@ -643,9 +771,22 @@ export default function App() {
       </div>
       <footer className="center">
         <p>
-          Created by <a href="https://github.com/FoxNineOne">FoxNineOne</a>,
-          Inspired by the teachings of{" "}
-          <a href="https://www.itsnavied.com/choice">Navie D</a>
+          Created by{" "}
+          <a
+            href="https://github.com/FoxNineOne"
+            target="_blank"
+            rel="noreferrer"
+          >
+            FoxNineOne
+          </a>
+          , Inspired by the teachings of{" "}
+          <a
+            href="https://www.itsnavied.com/choice"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Navie D
+          </a>
         </p>
       </footer>
     </div>

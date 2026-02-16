@@ -53,7 +53,7 @@ p {
   font-weight: 400;
   font-style: normal;
   margin-left: 7.5%;
-  font-size: 110%;
+  font-size: 120%;
 }
 li {
   color: #fff;
@@ -61,6 +61,7 @@ li {
   font-weight: 400;
   font-style: normal;
   margin-left: 5%;
+  font-size: 120%;
 }
 button {
   background-color: rgba(132, 140, 142, 0);
@@ -159,7 +160,25 @@ select option {
   accent-color: rgb(227, 81, 81);
   color: rgb(0, 0, 0);
   border-color: rgb(227, 81, 81);
-  font-size: 90%;
+  font-size: 100%;
+  width: 15%;
+  font-family: "Questrial", sans-serif;
+  font-style: bold;
+}
+.import {
+  accent-color: aquamarine;
+  color: rgb(255, 255, 255);
+  border-color: aquamarine;
+  font-size: 100%;
+  width: 15%;
+  font-family: "Questrial", sans-serif;
+  font-style: bold;
+}
+.export {
+  accent-color: rgb(224, 164, 35);
+  color: rgb(255, 255, 255);
+  border-color: rgb(224, 164, 35);
+  font-size: 100%;
   width: 15%;
   font-family: "Questrial", sans-serif;
   font-style: bold;
