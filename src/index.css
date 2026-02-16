@@ -23,8 +23,7 @@ code {
 
 h1 {
   text-align: center;
-  color: #fff;
-
+  color: #ffcf56;
   font-family: "Questrial", sans-serif;
 }
 
@@ -34,7 +33,7 @@ h2 {
   font-family: "Questrial", sans-serif;
   font-weight: 400;
   font-style: normal;
-  margin-left: 5%;
+  margin-left: 2.5%;
 }
 
 h3 {
@@ -43,7 +42,7 @@ h3 {
   font-family: "Questrial", sans-serif;
   font-weight: 300;
   font-style: normal;
-  margin-left: 9%;
+
   font-size: 110%;
 }
 
@@ -52,7 +51,7 @@ p {
   font-family: "Questrial", sans-serif;
   font-weight: 400;
   font-style: normal;
-  margin-left: 7.5%;
+
   font-size: 120%;
 }
 li {
@@ -60,7 +59,7 @@ li {
   font-family: "Questrial", sans-serif;
   font-weight: 400;
   font-style: normal;
-  margin-left: 5%;
+
   font-size: 120%;
 }
 button {
@@ -161,7 +160,7 @@ select option {
   color: rgb(0, 0, 0);
   border-color: rgb(227, 81, 81);
   font-size: 100%;
-  width: 15%;
+
   font-family: "Questrial", sans-serif;
   font-style: bold;
 }
@@ -170,16 +169,185 @@ select option {
   color: rgb(255, 255, 255);
   border-color: aquamarine;
   font-size: 100%;
-  width: 15%;
+
   font-family: "Questrial", sans-serif;
   font-style: bold;
 }
 .export {
   accent-color: rgb(224, 164, 35);
-  color: rgb(255, 255, 255);
   border-color: rgb(224, 164, 35);
   font-size: 100%;
-  width: 15%;
+
+  color: rgb(255, 255, 255);
   font-family: "Questrial", sans-serif;
   font-style: bold;
+}
+
+.remove {
+  accent-color: rgb(224, 164, 35);
+  border-color: rgb(224, 57, 35);
+  font-size: 100%;
+
+  color: rgb(255, 255, 255);
+  font-family: "Questrial", sans-serif;
+  font-style: bold;
+}
+
+.clear,
+.import,
+.export {
+  width: 100px;
+}
+
+/* ---------- Layout scaffolding ---------- */
+
+.appShell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 24px 32px;
+}
+
+/* Top row charts */
+.chartsRow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+
+.chartCard {
+  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+/* Selected sounds section */
+.selectedPanel {
+  background: rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+/* Header + rows share the same grid */
+.rowsGridHeader,
+.rowsGridRow {
+  display: grid;
+  grid-template-columns:
+    140px /* sound name */
+    140px /* label input */
+    90px /* remove */
+    1fr /* freq group */
+    1fr /* stereo group */
+    1fr /* depth group */
+    1fr; /* shape group */
+  gap: 10px;
+  align-items: center;
+}
+
+/* Header styling */
+.rowsGridHeader {
+  position: sticky; /* optional: keeps header visible when scrolling */
+  top: 0;
+  z-index: 5;
+  background: rgba(132, 140, 142, 0.92);
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  margin-bottom: 10px;
+}
+
+.headerGroupTitle {
+  font-size: 1.1rem;
+  /*color: #ffcf56; */
+  margin: 0 0 5px 0;
+  text-decoration: bold;
+}
+
+.headerOptionsRow span {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1.05;
+  word-break: break-word;
+  color: rgb(255, 255, 255);
+  font-family: "Questrial", sans-serif;
+}
+
+.headerOptionsRow,
+.optionsRow {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  align-items: center;
+}
+
+.freqCols {
+  grid-template-columns: repeat(4, 44px);
+}
+.stereoCols {
+  grid-template-columns: repeat(3, 44px);
+}
+.depthCols {
+  grid-template-columns: repeat(3, 38px);
+}
+.shapeCols {
+  grid-template-columns: repeat(2, 53px);
+}
+
+/* Row styling */
+.rowsGridRow {
+  padding: 10px 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgb(255, 255, 255);
+  font-family: "Questrial", sans-serif;
+}
+
+/* Keep your checkbox labels tight */
+.chkLabel {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+/* Bottom actions */
+.actionsRow {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* Responsive: let charts wrap and grid collapse */
+@media (max-width: 1100px) {
+  .chartsRow {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .chartsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .rowsGridHeader,
+  .rowsGridRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rowheaderlabel {
+  color: #ffffff;
+  font-family: "Questrial", sans-serif;
+  font-size: 1.2rem;
 }

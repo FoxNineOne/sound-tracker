@@ -1,18 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  PieChart,
-  Pie,
-  Legend,
-  Cell,
-} from "recharts";
+import ChartsRow from "./components/ChartsRow";
+import SelectedSounds from "./components/SelectedSounds";
 const LS_KEY = "sound-tracker:v1";
 
 const soundLibrary = [
@@ -186,6 +174,8 @@ export default function App() {
     return acc;
   }, {});
 
+  const shapeColours = ["#4e46e581", "#a09cebbe"]; // transient, sustained
+
   selectedRows.forEach((row) => {
     row.freqBands.forEach((band) => {
       freqTotals[band] += 1;
@@ -203,18 +193,18 @@ export default function App() {
     });
   });
 
-  const freqAreaData = frequencyBands.map((band) => ({
-    band,
+  const freqChartData = frequencyBands.map((band) => ({
+    name: band,
     count: freqTotals[band],
   }));
 
-  const presAreaData = stereoPresences.map((presence) => ({
-    presence,
+  const stereoChartData = stereoPresences.map((presence) => ({
+    name: presence,
     count: presTotals[presence],
   }));
 
-  const depthAreaData = depths.map((depth) => ({
-    depth,
+  const depthChartData = depths.map((depth) => ({
+    name: depth,
     count: depthTotals[depth],
   }));
 
@@ -222,8 +212,6 @@ export default function App() {
     name: shape,
     value: shapeTotals[shape],
   }));
-
-  const SHAPE_COLORS = ["#4e46e581", "#a09cebbe"]; // transient, sustained
 
   function addSound(soundId) {
     const sound = fullLibrary.find((sound) => sound.id === soundId);
@@ -386,7 +374,7 @@ export default function App() {
   }, [selectedRows, customSounds]);
 
   return (
-    <div>
+    <div className="appShell">
       <header>
         <h1>Sound Tracker</h1>
         <p className="center">
@@ -401,152 +389,61 @@ export default function App() {
           ></img>{" "}
         </p>
       </header>
-      {/*
-      <h2>Sound Library</h2>
 
-      <ul>
-        {soundLibrary.map((sound) => (
-          <li key={sound.id} className="soundLibrary">
-            {sound.name}{" "}
-            <button className="hover-btn" onClick={() => addSound(sound.id)}>
-              Add
-            </button>{" "}
-          </li>
-        ))}
-      </ul>
-*/}
-      <h2>Selected Sounds</h2>
-      {selectedRows.length === 0 ? (
-        <p>No Sounds selected, add some sounds!</p>
-      ) : (
+      <ChartsRow
+        freqChartData={freqChartData}
+        stereoChartData={stereoChartData}
+        depthChartData={depthChartData}
+        shapePieData={shapePieData}
+        freqTotals={freqTotals}
+        presTotals={presTotals}
+        depthTotals={depthTotals}
+        shapeTotals={shapeTotals}
+        shapeColours={shapeColours}
+      />
+
+      <section className="selectedPanel">
+        <h2>Selected Sounds</h2>
+        <SelectedSounds
+          selectedRows={selectedRows}
+          fullLibrary={fullLibrary}
+          frequencyBands={frequencyBands}
+          stereoPresences={stereoPresences}
+          depths={depths}
+          shapes={shapes}
+          updateLabel={updateLabel}
+          removeSound={removeSound}
+          toggleFreqBand={toggleFreqBand}
+          toggleStereo={toggleStereo}
+          toggleDepth={toggleDepth}
+          toggleShape={toggleShape}
+        />
         <div>
-          <h3>
-            {" "}
-            <span className="freq">Frequency</span>
-            {" | "}
-            <span className="stereo">Stereo Width</span>
-            {" | "}
-            <span className="depth">Depth</span> {" | "}
-            <span className="shape">Sound Shape</span>
-          </h3>
-          <ul>
-            {selectedRows.map((row) => {
-              const sound = fullLibrary.find(
-                (sound) => sound.id === row.soundId,
-              );
-
-              return (
-                <li key={row.rowId} style={{ marginBottom: 12 }}>
-                  <strong>{sound?.name ?? row.soundId}</strong>
-                  <input
-                    type="text"
-                    className="rowLabel"
-                    style={{ marginLeft: 12 }}
-                    value={row.label}
-                    onChange={(e) => updateLabel(row.rowId, e.target.value)}
-                  ></input>
-                  <button
-                    className="hover-btn"
-                    style={{ marginLeft: 12 }}
-                    onClick={() => removeSound(row.rowId)}
-                  >
-                    Remove
-                  </button>
-                  <div>
-                    {
-                      //Freq
-                    }
-                    {frequencyBands.map((band) => (
-                      <label key={band} style={{ marginRight: 12 }}>
-                        <input
-                          type="checkbox"
-                          className="hover-btn freq"
-                          style={{ marginLeft: 1, marginRight: 1 }}
-                          checked={row.freqBands.includes(band)}
-                          onChange={() => toggleFreqBand(row.rowId, band)}
-                        />
-                      </label>
-                    ))}
-                    {
-                      "|" //stereoPresence
-                    }
-                    {stereoPresences.map((presence) => (
-                      <label
-                        key={presence}
-                        style={{ marginLeft: 12, marginRight: 12 }}
-                      >
-                        <input
-                          type="checkbox"
-                          className="hover-btn stereo"
-                          style={{ marginLeft: 1, marginRight: 1 }}
-                          checked={row.stereoPresences.includes(presence)}
-                          onChange={() => toggleStereo(row.rowId, presence)}
-                        />
-                      </label>
-                    ))}
-                    {
-                      "|" // depth
-                    }
-                    {depths.map((depth) => (
-                      <label
-                        key={depth}
-                        style={{ marginLeft: 12, marginRight: 12 }}
-                      >
-                        <input
-                          type="checkbox"
-                          className="hover-btn depth"
-                          style={{ marginLeft: 1, marginRight: 1 }}
-                          checked={row.depths.includes(depth)}
-                          onChange={() => toggleDepth(row.rowId, depth)}
-                        />
-                      </label>
-                    ))}
-                    {
-                      "|" // shape
-                    }
-                    {shapes.map((shape) => (
-                      <label
-                        key={shape}
-                        style={{ marginLeft: 12, marginRight: 12 }}
-                      >
-                        <input
-                          type="checkbox"
-                          className="hover-btn shape"
-                          style={{ marginLeft: 1, marginRight: 1 }}
-                          checked={row.shapes.includes(shape)}
-                          onChange={() => toggleShape(row.rowId, shape)}
-                        />
-                      </label>
-                    ))}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
-      <div>
-        <p>
-          <select
-            value={selectedSoundId}
-            onChange={(e) => {
-              const id = e.target.value;
-              addSound(id);
-              setSelectedSoundId("");
-            }}
-          >
-            <option value="" disabled>
-              Add New Sound
-            </option>
-
-            {soundLibrary.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
+          <p>
+            <select
+              value={selectedSoundId}
+              onChange={(e) => {
+                const id = e.target.value;
+                addSound(id);
+                setSelectedSoundId("");
+              }}
+            >
+              <option value="" key="000" disabled>
+                Add New Sound
               </option>
-            ))}
-          </select>
-          <br />
-          <br />
+
+              {fullLibrary.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </p>
+        </div>
+      </section>
+
+      <section className="actionsRow">
+        <div>
           {
             //Clear Button
           }
@@ -588,187 +485,24 @@ export default function App() {
               Export project
             </button>
           )}
-        </p>
-      </div>
-      <div>
-        <h2 className="freq">Frequency Totals</h2>
-        <ul>
-          {frequencyBands.map((band) => (
-            <li key={band}>
-              {band}: {freqTotals[band]}
-            </li>
-          ))}
-        </ul>
-
-        <div style={{ width: 250, height: 200 }} width="100%" height="100%">
-          <ResponsiveContainer
-            minWidth="0"
-            minHeight="0"
-            width="100%"
-            height="100%"
-          >
-            <AreaChart data={freqAreaData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="band"
-                tick={{ fill: "white" }}
-                tickLine={{ stroke: "white" }}
-                stroke="white"
-              />
-              <YAxis
-                allowDecimals={false}
-                tick={{ fill: "#ffffff00" }}
-                tickLine={{ stroke: "#ffffff00" }}
-                stroke="#ffffff"
-              />
-              {
-                //<Tooltip /> //Do I need this?
-              }
-              <Area
-                type="monotone"
-                dataKey="count"
-                fill="aquamarine"
-                tick={{ fill: "white" }}
-                tickLine={{ stroke: "white" }}
-                stroke="white"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
         </div>
+      </section>
 
-        <h2 className="stereo">Stereo Totals</h2>
-        <ul>
-          {stereoPresences.map((presence) => (
-            <li key={presence}>
-              {presence} : {presTotals[presence]}
-            </li>
-          ))}
-        </ul>
+      {/*
+      <h2>Sound Library</h2>
 
-        <div style={{ width: 250, height: 200 }}>
-          <ResponsiveContainer
-            minWidth="0"
-            minHeight="0"
-            width="100%"
-            height="100%"
-          >
-            <AreaChart data={presAreaData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="presence"
-                tick={{ fill: "white" }}
-                tickLine={{ stroke: "white" }}
-                stroke="white"
-              />
-              <YAxis
-                allowDecimals={false}
-                tick={{ fill: "#ffffff00" }}
-                tickLine={{ stroke: "#ffffff00" }}
-                stroke="white"
-              />
-              {
-                // <Tooltip /> //Do I need this?
-              }
-              <Area
-                type="monotone"
-                dataKey="count"
-                fill=" rgb(224, 164, 35)"
-                tick={{ fill: "white" }}
-                tickLine={{ stroke: "white" }}
-                stroke="white"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+      <ul>
+        {soundLibrary.map((sound) => (
+          <li key={sound.id} className="soundLibrary">
+            {sound.name}{" "}
+            <button className="hover-btn" onClick={() => addSound(sound.id)}>
+              Add
+            </button>{" "}
+          </li>
+        ))}
+      </ul>
+*/}
 
-        <h2 className="depth">Depth Totals</h2>
-        <ul>
-          {depths.map((depth) => (
-            <li key={depth}>
-              {depth} : {depthTotals[depth]}
-            </li>
-          ))}
-        </ul>
-
-        <div style={{ width: 250, height: 200 }}>
-          <ResponsiveContainer
-            minWidth="0"
-            minHeight="0"
-            width="100%"
-            height="100%"
-          >
-            <AreaChart data={depthAreaData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="depth"
-                tick={{ fill: "white" }}
-                tickLine={{ stroke: "white" }}
-                stroke="white"
-              />
-              <YAxis
-                allowDecimals={false}
-                tick={{ fill: "#ffffff00" }}
-                tickLine={{ stroke: "#ffffff00" }}
-                stroke="white"
-              />
-              {
-                // <Tooltip /> //Do I need this?
-              }
-              <Area
-                type="monotone"
-                dataKey="count"
-                fill="rgb(227, 81, 81)"
-                tick={{ fill: "white" }}
-                tickLine={{ stroke: "white" }}
-                stroke="white"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-
-        <h2 className="shape">Shape Totals</h2>
-        <ul>
-          {shapes.map((shape) => (
-            <li key={shape}>
-              {shape} : {shapeTotals[shape]}
-            </li>
-          ))}
-        </ul>
-
-        <div style={{ width: 250, height: 200 }}>
-          <ResponsiveContainer
-            minWidth="0"
-            minHeight="0"
-            width="100%"
-            height="100%"
-          >
-            <PieChart>
-              <Pie
-                data={shapePieData}
-                dataKey={"value"}
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius="100%"
-                innerRadius="20%"
-              >
-                {shapePieData.map((_, index) => (
-                  <Cell
-                    key={index}
-                    fill={SHAPE_COLORS[index % SHAPE_COLORS.length]}
-                  />
-                ))}
-              </Pie>
-
-              <Legend
-                formatter={(value) => (
-                  <span style={{ color: "white" }}>{value}</span>
-                )}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
       <footer className="center">
         <p>
           Created by{" "}
