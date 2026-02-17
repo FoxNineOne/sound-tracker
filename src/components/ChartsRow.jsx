@@ -4,7 +4,6 @@ import {
   Area,
   XAxis,
   YAxis,
-  Tooltip,
   CartesianGrid,
   PieChart,
   Pie,

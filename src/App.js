@@ -26,9 +26,7 @@ export default function App() {
     savedData.selectedRows ?? [],
   );
 
-  const [customSounds, setCustomSounds] = useState(
-    savedData.customSounds ?? [],
-  );
+  const [customSounds] = useState([]);
 
   const fullLibrary = [...soundLibrary, ...customSounds];
 
