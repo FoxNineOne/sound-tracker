@@ -1,135 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import ChartsRow from "./components/ChartsRow";
 import SelectedSounds from "./components/SelectedSounds";
+import { soundLibrary } from "./data/soundLibrary";
+import {
+  frequencyBands,
+  stereoPresences,
+  depths,
+  shapes,
+} from "./data/constants";
+
 const LS_KEY = "sound-tracker:v1";
-
-const soundLibrary = [
-  {
-    id: "ambience",
-    name: "Ambience",
-    defaultFreqBands: ["low-mid", "mid"],
-    defaultStereoPresence: ["medium", "wide"],
-    defaultDepth: ["back"],
-    defaultShape: ["transient", "sustained"],
-  },
-  {
-    id: "arp",
-    name: "Arpeggiator",
-    defaultFreqBands: ["low-mid", "mid", "high"],
-    defaultStereoPresence: ["narrow", "medium"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["transient"],
-  },
-  {
-    id: "bass",
-    name: "Bass",
-    defaultFreqBands: ["low", "low-mid"],
-    defaultStereoPresence: ["narrow", "wide"],
-    defaultDepth: ["front"],
-    defaultShape: ["transient", "sustained"],
-  },
-  {
-    id: "bell",
-    name: "Bell",
-    defaultFreqBands: ["mid", "high"],
-    defaultStereoPresence: ["narrow", "medium"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["transient"],
-  },
-  {
-    id: "brass",
-    name: "Brass",
-    defaultFreqBands: ["low-mid", "mid", "high"],
-    defaultStereoPresence: ["narrow", "medium"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["transient", "sustained"],
-  },
-  {
-    id: "flute",
-    name: "Flute",
-    defaultFreqBands: ["mid", "high"],
-    defaultStereoPresence: ["narrow", "medium"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["transient", "sustained"],
-  },
-  {
-    id: "guitar",
-    name: "Guitar",
-    defaultFreqBands: ["low-mid", "mid", "high"],
-    defaultStereoPresence: ["narrow", "medium"],
-    defaultDepth: ["middle", "back"],
-    defaultShape: ["transient"],
-  },
-  {
-    id: "keys",
-    name: "Keys",
-    defaultFreqBands: ["low-mid", "mid", "high"],
-    defaultStereoPresence: ["narrow", "medium"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["transient"],
-  },
-  {
-    id: "lead",
-    name: "Lead",
-    defaultFreqBands: ["mid", "high"],
-    defaultStereoPresence: ["narrow", "medium"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["sustained"],
-  },
-  {
-    id: "organ",
-    name: "Organ",
-    defaultFreqBands: ["low-mid", "mid"],
-    defaultStereoPresence: ["narrow", "medium"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["sustained"],
-  },
-  {
-    id: "pad",
-    name: "Pad",
-    defaultFreqBands: ["low-mid", "mid"],
-    defaultStereoPresence: ["medium", "wide"],
-    defaultDepth: ["middle", "back"],
-    defaultShape: ["sustained"],
-  },
-  {
-    id: "percussion",
-    name: "Percussion",
-    defaultFreqBands: ["mid", "high"],
-    defaultStereoPresence: ["narrow", "medium", "wide"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["transient"],
-  },
-  {
-    id: "pluck",
-    name: "Pluck",
-    defaultFreqBands: ["mid", "high"],
-    defaultStereoPresence: ["narrow", "medium"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["transient"],
-  },
-  {
-    id: "strings",
-    name: "Strings",
-    defaultFreqBands: ["mid", "high"],
-    defaultStereoPresence: ["medium", "wide"],
-    defaultDepth: ["middle", "back"],
-    defaultShape: ["sustained"],
-  },
-  {
-    id: "synth",
-    name: "Synthesizer",
-    defaultFreqBands: ["low-mid", "mid", "high"],
-    defaultStereoPresence: ["narrow", "medium", "wide"],
-    defaultDepth: ["front", "middle"],
-    defaultShape: ["transient", "sustained"],
-  },
-];
-
-const frequencyBands = ["low", "low-mid", "mid", "high"];
-const stereoPresences = ["narrow", "medium", "wide"];
-const depths = ["front", "middle", "back"];
-const shapes = ["transient", "sustained"];
 
 export default function App() {
   const fileInputRef = useRef(null);
