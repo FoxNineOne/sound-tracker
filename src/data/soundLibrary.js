@@ -1,4 +1,4 @@
-export const soundLibrary = (soundLibrary = [
+export const soundLibrary = [
   {
     id: "ambience",
     name: "Ambience",
@@ -119,4 +119,4 @@ export const soundLibrary = (soundLibrary = [
     defaultDepth: ["front", "middle"],
     defaultShape: ["transient", "sustained"],
   },
-]);
+];

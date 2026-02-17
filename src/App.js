@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
+import { soundLibrary } from "./data/soundLibrary";
 import ChartsRow from "./components/ChartsRow";
 import SelectedSounds from "./components/SelectedSounds";
-import { soundLibrary } from "./data/soundLibrary";
 import {
   frequencyBands,
   stereoPresences,
