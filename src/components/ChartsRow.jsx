@@ -33,7 +33,10 @@ export default function ChartsRow({
             width="100%"
             height="100%"
           >
-            <AreaChart data={freqChartData}>
+            <AreaChart
+              data={freqChartData}
+              margin={{ top: 5, right: 25, left: -25, bottom: 5 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
@@ -78,7 +81,10 @@ export default function ChartsRow({
             width="100%"
             height="100%"
           >
-            <AreaChart data={stereoChartData}>
+            <AreaChart
+              data={stereoChartData}
+              margin={{ top: 5, right: 25, left: -25, bottom: 5 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
@@ -123,7 +129,10 @@ export default function ChartsRow({
             width="100%"
             height="100%"
           >
-            <AreaChart data={depthChartData}>
+            <AreaChart
+              data={depthChartData}
+              margin={{ top: 5, right: 25, left: -25, bottom: 5 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="name"
